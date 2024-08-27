@@ -23,4 +23,10 @@ A mod for Muse Dash that allows making custom playlists.
 
 > If you want to find a UID you can use https://musedash.moe. The UID will be in the URL. (https://musedash.moe/music/<uid\>)
 
+> Custom Albums are prefixed with `album_` and then their filename without the .mdm extension.
+>
+> For example, `Sweet_Berry_Love.mdm` is defined as `album_Sweet_Berry_Love`.
+> 
+> If the chart is in a folder, add `_folder` afterward.
+
 Note that the playlists will only update once you restart the game.

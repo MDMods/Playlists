@@ -8,6 +8,7 @@ namespace Playlists;
 
 public class Playlists : MelonMod {
     public static MelonLogger.Instance Logger { get; } = new(nameof(Playlists));
+    public static bool CustomAlbumsInstalled { get; private set; }
 
     private static string PlaylistPath => Path.Combine(Directory.GetCurrentDirectory(), "UserData/Playlists");
         
@@ -19,6 +20,11 @@ public class Playlists : MelonMod {
         { "Japanese", "Playlists" },
         { "Korean", "Playlists" }
     };
+
+    public override void OnLateInitializeMelon()
+    {
+        CustomAlbumsInstalled = FindMelon("CustomAlbums", "Team Baller") is not null;
+    }
 
     public static List<CustomPlaylist> GetPlaylists()
     {

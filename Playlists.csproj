@@ -10,6 +10,12 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     
+    <ItemGroup>
+        <Reference Include="CustomAlbums">
+            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Muse Dash\Mods\CustomAlbums.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    
     <ItemGroup Label="MelonLibs">
         <Reference Include="0Harmony">
             <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Muse Dash\MelonLoader\net6\0Harmony.dll</HintPath>

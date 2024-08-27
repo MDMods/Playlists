@@ -19,3 +19,5 @@ using MelonLoader;
 [assembly: AssemblyFileVersion("1.0.0")]
 [assembly: MelonInfo(typeof(Playlists.Playlists), "Playlists", "1.0.0", "Flustix")]
 [assembly: MelonGame("PeroPeroGames", "MuseDash")]
+
+[assembly: MelonOptionalDependencies("CustomAlbums")]
