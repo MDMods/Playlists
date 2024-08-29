@@ -28,4 +28,25 @@ public static class CustomsIntegration
             return Fallback;
         }
     }
+
+    public static string GetAlbumFromID(string uid)
+    {
+        try
+        {
+            if (!Playlists.CustomAlbumsInstalled)
+                return Fallback;
+
+            var album = AlbumManager.GetByUid(uid);
+
+            if (album is null)
+                return Fallback;
+
+            return album.AlbumName;
+        }
+        catch (Exception ex)
+        {
+            Playlists.Logger.Error($"Failed to resolve custom album with uid {uid}!", ex);
+            return Fallback;
+        }
+    }
 }

@@ -23,12 +23,10 @@ public class APIPatch
             {
                 Playlists.Logger.Msg("Caught music_tag request.");
 
-                var playlists = Playlists.GetPlaylists();
-
                 var data = new
                 {
                     code = 0,
-                    music_tag_list = playlists.Select((p, i) =>
+                    music_tag_list = Playlists.LoadedPlaylists.Select((p, i) =>
                     {
                         var ids = p.Albums.Select(alb =>
                         {
@@ -48,7 +46,7 @@ public class APIPatch
                         {
                             object_id = p.FileName,
                             created_at = p.Creation.ToString(CultureInfo.InvariantCulture),
-                            updated_at = p.Creation.ToString(CultureInfo.InvariantCulture),
+                            updated_at = p.LastModified.ToString(CultureInfo.InvariantCulture),
                             tag_name = new Dictionary<string, string>
                             {
                                 { "English", p.Name },
