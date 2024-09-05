@@ -16,7 +16,6 @@ public class APIPatch
     private static bool Prefix(string url, string method,
         Il2CppSystem.Collections.Generic.Dictionary<string, Object> datas, Action<JObject> succeedCallback)
     {
-
         switch (url)
         {
             case "musedash/v1/music_tag":

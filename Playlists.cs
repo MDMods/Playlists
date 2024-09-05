@@ -72,7 +72,8 @@ public class Playlists : MelonMod {
     public override void OnUpdate()
     {
         base.OnUpdate();
-        
+
+        // stops this from triggering when a textbox is focused
         if (EventSystem.current?.currentSelectedGameObject is not null)
             return;
 
@@ -101,6 +102,8 @@ public class Playlists : MelonMod {
             {
                 if (!CustomAlbumsInstalled)
                 {
+                    // I don't know how you would trigger this
+                    // but, you never know...
                     ShowText.ShowInfo("Custom Albums is not installed!");
                     return;
                 }
