@@ -1,7 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
+        <!-- this should be set with the prop flag when building releases -->
+        <Version>0.0.0</Version>
+        <AssemblyName>Playlists</AssemblyName>
+        <Description>A mod that allows you to create custom playlists for Muse Dash.</Description>
+        <Authors>flustix</Authors>
     </PropertyGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="MelonLoader.MelonInfoAttribute">
+            <_Parameter1>Playlists.Playlists</_Parameter1>
+            <_Parameter1_TypeName>System.Type</_Parameter1_TypeName>
+            <_Parameter2>Playlists</_Parameter2>
+            <_Parameter3>$(Version)</_Parameter3>
+            <_Parameter4>flustix</_Parameter4>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="MelonLoader.MelonGameAttribute">
+            <_Parameter1>PeroPeroGames</_Parameter1>
+            <_Parameter2>MuseDash</_Parameter2>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="MelonLoader.MelonOptionalDependenciesAttribute">
+            <_Parameter1>CustomAlbums</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
     
     <ItemGroup Label="SystemLibs">
         <Reference Include="System" />
