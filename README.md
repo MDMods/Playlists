@@ -39,3 +39,18 @@ So if you have a list of [a playlist], [other playlist] and [random playlist], 1
 > If the chart is in a folder, add `_folder` afterward.
 
 **Note that the playlists will only update once you restart the game.**
+
+### Template File
+
+```json
+{
+  "name": "Playlist Name",
+  "icon": "https://mdmc.moe/cdn/melon.png",
+  "position": 1,
+  "albums": [
+    "27-1",
+    "27-0",
+    "0-47"
+  ]
+}
+```
