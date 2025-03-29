@@ -11,7 +11,8 @@ using UnityEngine.EventSystems;
 
 namespace Playlists;
 
-public class Playlists : MelonMod {
+public class Playlists : MelonMod
+{
     public static MelonLogger.Instance Logger { get; } = new(nameof(Playlists));
     public static bool CustomAlbumsInstalled { get; private set; }
 
@@ -21,7 +22,8 @@ public class Playlists : MelonMod {
     public override void OnLateInitializeMelon()
     {
         LoadedPlaylists = GetPlaylists();
-        CustomAlbumsInstalled = FindMelon("CustomAlbums", "Team Baller") is not null;
+        CustomAlbumsInstalled = FindMelon("CustomAlbums", "Team Baller") is not null
+                                || FindMelon("CustomAlbums", "Two Fellas") is not null;
     }
 
     private static List<CustomPlaylist> GetPlaylists()
@@ -40,7 +42,7 @@ public class Playlists : MelonMod {
             return;
 
         Directory.CreateDirectory(PlaylistPath);
-        
+
         var defaultPlaylist = new CustomPlaylist
         {
             FileName = "default.json",
@@ -84,15 +86,15 @@ public class Playlists : MelonMod {
         {
             if (_pressed)
                 return;
-            
+
             _pressed = true;
-            
+
             if (idx >= LoadedPlaylists.Count)
                 return;
 
             var playlist = LoadedPlaylists[idx];
             var selected = GlobalDataBase.s_DbMusicTag.CurMusicInfo();
-            
+
             if (selected is null)
                 return;
 
