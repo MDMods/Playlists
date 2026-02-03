@@ -18,6 +18,8 @@ public class Playlists : MelonMod
 
     public static string PlaylistPath => Path.Combine(Directory.GetCurrentDirectory(), "UserData/Playlists");
     public static List<CustomPlaylist> LoadedPlaylists { get; private set; } = new();
+    
+    private static bool SkipUpdate { get; set; }
 
     public override void OnLateInitializeMelon()
     {
@@ -71,9 +73,24 @@ public class Playlists : MelonMod
         KeyCode.Alpha0
     };
 
+    public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+    {
+        if (sceneName == "UISystem_PC")
+        {
+            SkipUpdate = false;
+        }
+        else
+        {
+            SkipUpdate = true;
+        }
+    }
+
     public override void OnUpdate()
     {
         base.OnUpdate();
+
+        if (SkipUpdate)
+            return;
 
         // stops this from triggering when a textbox is focused
         if (EventSystem.current?.currentSelectedGameObject is not null)
