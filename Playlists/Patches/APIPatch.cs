@@ -29,7 +29,7 @@ public class APIPatch
                     {
                         return new
                         {
-                            object_id = p.FileName,
+                            object_id = p.ID,
                             created_at = p.Creation.ToString(CultureInfo.InvariantCulture),
                             updated_at = p.LastModified.ToString(CultureInfo.InvariantCulture),
                             tag_name = new Dictionary<string, string>

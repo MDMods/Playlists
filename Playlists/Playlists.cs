@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text.Json;
 using Il2CppAssets.Scripts.Database;
 using Il2CppAssets.Scripts.UI.Controls;
+using Il2CppAssets.Scripts.UI.Panels;
 using MelonLoader;
+using Playlists.Lists;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -17,7 +19,7 @@ public class Playlists : MelonMod
     public static bool CustomAlbumsInstalled { get; private set; }
 
     public static string PlaylistPath => Path.Combine(Directory.GetCurrentDirectory(), "UserData/Playlists");
-    public static List<CustomPlaylist> LoadedPlaylists { get; private set; } = new();
+    public static List<IPlaylist> LoadedPlaylists { get; private set; } = new();
 
     public override void OnLateInitializeMelon()
     {
@@ -26,12 +28,35 @@ public class Playlists : MelonMod
                                 || FindMelon("CustomAlbums", "Two Fellas") is not null;
     }
 
-    private static List<CustomPlaylist> GetPlaylists()
+    public static IEnumerable<string> ResolvePlaylistAlbums(IPlaylist playlist)
+    {
+        foreach (var alb in playlist.Albums)
+        {
+            if (!alb.StartsWith(CustomsIntegration.AlbumPrefix))
+                yield return alb;
+
+            if (!CustomAlbumsInstalled)
+            {
+                Logger.Error($"Failed to resolve custom album '{alb}' because CustomAlbums is missing!");
+                continue;
+            }
+
+            var result = CustomsIntegration.GetIDForAlbum(alb);
+            if (result == CustomsIntegration.Fallback) continue;
+
+            yield return result;
+        }
+    }
+
+    /// <summary>
+    /// Loads playlists from the filesystem. (Any mods wanting to add custom playlists should Postfix this)
+    /// </summary>
+    private static List<IPlaylist> GetPlaylists()
     {
         EnsureCreated();
 
         var files = Directory.GetFiles(PlaylistPath, "*.json");
-        var list = files.Select(CustomPlaylist.ReadFromDisk).ToList();
+        var list = files.Select(FileSystemPlaylist.ReadFromDisk).Cast<IPlaylist>().ToList();
         list.Sort((a, b) => a.CompareTo(b));
         return list;
     }
@@ -43,9 +68,9 @@ public class Playlists : MelonMod
 
         Directory.CreateDirectory(PlaylistPath);
 
-        var defaultPlaylist = new CustomPlaylist
+        var defaultPlaylist = new FileSystemPlaylist
         {
-            FileName = "default.json",
+            ID = "default.json",
             Name = "Custom Playlist",
             Icon = "https://mdmc.moe/cdn/melon.png",
             Position = 1,
