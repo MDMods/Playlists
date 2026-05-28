@@ -27,20 +27,6 @@ public class APIPatch
                     code = 0,
                     music_tag_list = Playlists.LoadedPlaylists.Select((p, i) =>
                     {
-                        var ids = p.Albums.Select(alb =>
-                        {
-                            if (!alb.StartsWith(CustomsIntegration.AlbumPrefix))
-                                return alb;
-
-                            if (!Playlists.CustomAlbumsInstalled)
-                            {
-                                Playlists.Logger.Error($"Failed to resolve custom album '{alb}' because CustomAlbums is missing!");
-                                return CustomsIntegration.Fallback;
-                            }
-
-                            return CustomsIntegration.GetIDForAlbum(alb);
-                        }).ToList();
-                        
                         return new
                         {
                             object_id = p.FileName,
@@ -55,7 +41,7 @@ public class APIPatch
                                 { "Korean", p.Name }
                             },
                             tag_picture = p.Icon,
-                            music_list = ids.Where(id => id != CustomsIntegration.Fallback),
+                            music_list = p.Resolve().Where(id => id != CustomsIntegration.Fallback),
                             anchor_pattern = false,
                             sort_key = i,
                             icon_name = $"Icon{p.Name}"
