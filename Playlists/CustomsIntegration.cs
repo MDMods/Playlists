@@ -1,13 +1,28 @@
 ﻿using System;
 using CustomAlbums.Managers;
+using Playlists.Interfaces;
 
 namespace Playlists;
+
+public class CustomsResolver : IAlbumResolver
+{
+    public bool ValidFor(string reference) => reference.StartsWith(CustomsIntegration.AlbumPrefix);
+
+    public string? GetReference(string reference)
+    {
+        if (!Playlists.CustomAlbumsInstalled)
+            return null;
+
+        var result = CustomsIntegration.GetIDForAlbum(reference);
+        return result == CustomsIntegration.Fallback ? null : result;
+    }
+}
 
 public static class CustomsIntegration
 {
     public const string Fallback = "00-00";
     public const string AlbumPrefix = "album_";
-    
+
     public static string GetIDForAlbum(string name)
     {
         try

@@ -6,6 +6,7 @@
         <AssemblyName>Playlists</AssemblyName>
         <Description>A mod that allows you to create custom playlists for Muse Dash.</Description>
         <Authors>flustix</Authors>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
@@ -24,20 +25,20 @@
             <_Parameter1>CustomAlbums</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
-    
+
     <ItemGroup Label="SystemLibs">
-        <Reference Include="System" />
-        <Reference Include="System.Core" />
-        <Reference Include="System.Data" />
-        <Reference Include="System.Xml" />
+        <Reference Include="System"/>
+        <Reference Include="System.Core"/>
+        <Reference Include="System.Data"/>
+        <Reference Include="System.Xml"/>
     </ItemGroup>
-    
+
     <ItemGroup>
         <Reference Include="CustomAlbums">
             <HintPath>$(MD_DIRECTORY)\Mods\CustomAlbums.dll</HintPath>
         </Reference>
     </ItemGroup>
-    
+
     <ItemGroup Label="MelonLibs">
         <Reference Include="0Harmony">
             <HintPath>$(MD_DIRECTORY)\MelonLoader\net6\0Harmony.dll</HintPath>

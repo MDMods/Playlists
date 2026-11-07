@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using Il2CppAssets.Scripts.Database;
 using Il2CppAssets.Scripts.UI.Controls;
-using Il2CppAssets.Scripts.UI.Panels;
 using MelonLoader;
+using Playlists.Interfaces;
 using Playlists.Lists;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,44 +18,81 @@ public class Playlists : MelonMod
     public static bool CustomAlbumsInstalled { get; private set; }
 
     public static string PlaylistPath => Path.Combine(Directory.GetCurrentDirectory(), "UserData/Playlists");
-    public static List<IPlaylist> LoadedPlaylists { get; private set; } = new();
 
-    public override void OnLateInitializeMelon()
+    public static List<IPlaylist> LoadedPlaylists => _loadedPlaylists ??= GetPlaylists();
+    private static List<IPlaylist>? _loadedPlaylists;
+
+    private static readonly List<IPlaylist> RegisteredLists = new();
+
+    public override void OnInitializeMelon()
     {
-        LoadedPlaylists = GetPlaylists();
         CustomAlbumsInstalled = FindMelon("CustomAlbums", "Team Baller") is not null
                                 || FindMelon("CustomAlbums", "Two Fellas") is not null;
+
+        RegisterResolver(new CustomsResolver());
     }
 
-    public static IEnumerable<string> ResolvePlaylistAlbums(IPlaylist playlist)
-    {
-        foreach (var alb in playlist.Albums)
-        {
-            if (!alb.StartsWith(CustomsIntegration.AlbumPrefix))
-                yield return alb;
+    #region Resolvers
 
-            if (!CustomAlbumsInstalled)
+    private static readonly List<IAlbumResolver> Resolvers = new();
+
+    /// <summary>
+    /// Registers a custom resolver for <see cref="ResolveReferences"/>.
+    /// </summary>
+    /// <param name="resolver"></param>
+    public static void RegisterResolver(IAlbumResolver resolver) => Resolvers.Add(resolver);
+
+    /// <summary>
+    /// Resolves references to any special album types like CustomAlbums (album_ prefix).
+    /// </summary>
+    public static IEnumerable<string> ResolveReferences(IEnumerable<string> input)
+    {
+        var result = new List<string>();
+
+        foreach (var reference in input)
+        {
+            var match = Resolvers.FirstOrDefault(x => x.ValidFor(reference));
+
+            if (match is null)
             {
-                Logger.Error($"Failed to resolve custom album '{alb}' because CustomAlbums is missing!");
+                result.Add(reference);
                 continue;
             }
 
-            var result = CustomsIntegration.GetIDForAlbum(alb);
-            if (result == CustomsIntegration.Fallback) continue;
-
-            yield return result;
+            var resolved = match.GetReference(reference);
+            if (string.IsNullOrWhiteSpace(resolved)) continue;
+            result.Add(resolved);
         }
+
+        return result;
     }
 
+    #endregion
+
     /// <summary>
-    /// Loads playlists from the filesystem. (Any mods wanting to add custom playlists should Postfix this)
+    /// Registers a mod-provided playlist that will be added to the list when the main mod loads.
     /// </summary>
+    public static void RegisterPlaylist(IPlaylist playlist) => RegisteredLists.Add(playlist);
+
+    public static int ComparePlaylists(IPlaylist? one, IPlaylist? two)
+    {
+        if (ReferenceEquals(one, two))
+            return 0;
+
+        if (one is null || two is null)
+            return 1;
+
+        var result = one.Position.CompareTo(two.Position);
+        return result != 0 ? result : string.Compare(one.Name, two.Name, StringComparison.Ordinal);
+    }
+
     private static List<IPlaylist> GetPlaylists()
     {
         EnsureCreated();
 
         var files = Directory.GetFiles(PlaylistPath, "*.json");
         var list = files.Select(FileSystemPlaylist.ReadFromDisk).Cast<IPlaylist>().ToList();
+        list.AddRange(RegisteredLists);
         list.Sort((a, b) => a.CompareTo(b));
         return list;
     }

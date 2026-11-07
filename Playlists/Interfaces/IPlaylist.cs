@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Playlists.Lists;
+namespace Playlists.Interfaces;
 
 public interface IPlaylist : IComparable<IPlaylist>
 {
@@ -15,11 +15,15 @@ public interface IPlaylist : IComparable<IPlaylist>
 
     bool Add(string album);
     bool Remove(string album);
+    
+    /// <summary>
+    /// Called after every <see cref="Add"/> and <see cref="Remove"/>.
+    /// </summary>
     void SaveToDisk();
 
     /// <summary>
-    /// Gets the items from <see cref="Albums"/> and resolves any customs references.
-    /// (Ignores album_ prefixes if customs isn't loaded.)
+    /// Resolves and custom references in the albums list.
+    /// If you don't want to do anything with this, return <see cref="Playlists.ResolveReferences"/>.
     /// </summary>
     /// <returns>A list of MusicUids</returns>
     IEnumerable<string> Resolve();

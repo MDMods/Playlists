@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Playlists.Interfaces;
 
 namespace Playlists.Lists;
 
 public class FileSystemPlaylist : IPlaylist
 {
-    [JsonIgnore] public string ID { get; set; } // filename
+    [JsonIgnore] public string ID { get; set; } = string.Empty; // filename
     [JsonIgnore] public DateTime Creation { get; set; }
     [JsonIgnore] public DateTime LastModified { get; set; }
     [JsonPropertyName("name")] public string Name { get; set; } = "";
@@ -34,19 +35,8 @@ public class FileSystemPlaylist : IPlaylist
         return true;
     }
 
-    IEnumerable<string> IPlaylist.Resolve() => Playlists.ResolvePlaylistAlbums(this);
-
-    int IComparable<IPlaylist>.CompareTo(IPlaylist other)
-    {
-        if (ReferenceEquals(this, other))
-            return 0;
-
-        if (other is null)
-            return 1;
-
-        var result = Position.CompareTo(other.Position);
-        return result != 0 ? result : string.Compare(Name, other.Name, StringComparison.Ordinal);
-    }
+    IEnumerable<string> IPlaylist.Resolve() => Playlists.ResolveReferences(Albums);
+    int IComparable<IPlaylist>.CompareTo(IPlaylist? other) => Playlists.ComparePlaylists(this, other);
 
     #region R/W
 
@@ -64,7 +54,7 @@ public class FileSystemPlaylist : IPlaylist
     {
         var info = new FileInfo(path);
         var json = File.ReadAllText(path);
-        var playlist = JsonSerializer.Deserialize<FileSystemPlaylist>(json);
+        var playlist = JsonSerializer.Deserialize<FileSystemPlaylist>(json)!;
 
         playlist.ID = Path.GetFileName(path);
         playlist.Creation = info.CreationTime;
