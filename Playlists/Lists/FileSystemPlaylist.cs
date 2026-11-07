@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Playlists.Interfaces;
 
 namespace Playlists.Lists;
@@ -48,7 +49,7 @@ public class FileSystemPlaylist : IPlaylist
         return true;
     }
 
-    IEnumerable<string> IPlaylist.Resolve() => Playlists.ResolveReferences(Albums);
+    Task<IEnumerable<string>> IPlaylist.Resolve() => Task.FromResult(Playlists.ResolveReferences(Albums));
     int IComparable<IPlaylist>.CompareTo(IPlaylist? other) => Playlists.ComparePlaylists(this, other);
 
     #region R/W

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
+using CustomAlbums.Data;
 using CustomAlbums.Managers;
 using Playlists.Interfaces;
 
-namespace Playlists;
+namespace Playlists.Customs;
 
 public class CustomsResolver : IAlbumResolver
 {
@@ -22,6 +24,9 @@ public static class CustomsIntegration
 {
     public const string FALLBACK = "00-00";
     public const string ALBUM_PREFIX = "album_";
+
+    public static Album[] GetAllAlbums()
+        => AlbumManager.LoadedAlbums.Select(x => x.Value).ToArray();
 
     public static string GetIDForAlbum(string name)
     {

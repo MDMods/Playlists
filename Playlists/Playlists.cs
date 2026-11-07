@@ -5,6 +5,7 @@ using System.Linq;
 using Il2CppAssets.Scripts.Database;
 using Il2CppAssets.Scripts.UI.Controls;
 using MelonLoader;
+using Playlists.Customs;
 using Playlists.Interfaces;
 using Playlists.Lists;
 using UnityEngine;
@@ -19,6 +20,9 @@ public class Playlists : MelonMod
 
     public static string PlaylistPath => Path.Combine(Directory.GetCurrentDirectory(), "UserData/Playlists");
 
+    internal static bool FinishedLoading { get; set; }
+    internal static Dictionary<IPlaylist, IEnumerable<string>> ResolveCache { get; } = new();
+
     public static List<IPlaylist> LoadedPlaylists => loadedPlaylists ??= getPlaylists();
     private static List<IPlaylist>? loadedPlaylists;
 
@@ -29,7 +33,10 @@ public class Playlists : MelonMod
         CustomAlbumsInstalled = FindMelon("CustomAlbums", "Team Baller") is not null
                                 || FindMelon("CustomAlbums", "Two Fellas") is not null;
 
+        if (!CustomAlbumsInstalled) return;
+
         RegisterResolver(new CustomsResolver());
+        RegisterPlaylist(new CustomsRankedPlaylist());
     }
 
     #region Resolvers
@@ -196,5 +203,26 @@ public class Playlists : MelonMod
             ShowText.ShowInfo($"{(remove ? "Removed from" : "Added to")} playlist '{playlist.Name}'!");
         }
         else pressed = false;
+    }
+
+    public override void OnGUI()
+    {
+        base.OnGUI();
+
+        if (FinishedLoading)
+            return;
+
+        var wHalf = Screen.width / 2f;
+        var rect = new Rect(wHalf - 100, Screen.height - 96, 200, 48);
+
+        GUI.color = new Color(0.23529412f, 0.15686275f, 0.43529412f, 1f);
+        GUI.DrawTexture(rect, Texture2D.whiteTexture);
+        GUI.color = Color.white;
+        GUI.Label(rect, "Loading Playlists...", new GUIStyle(GUI.skin.label)
+        {
+            fontSize = 16,
+            alignment = TextAnchor.MiddleCenter,
+            normal = { textColor = Color.white }
+        });
     }
 }

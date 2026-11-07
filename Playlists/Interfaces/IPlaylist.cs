@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Playlists.Interfaces;
 
@@ -26,5 +27,5 @@ public interface IPlaylist : IComparable<IPlaylist>
     /// If you don't want to do anything with this, return <see cref="Playlists.ResolveReferences"/>.
     /// </summary>
     /// <returns>A list of MusicUids</returns>
-    IEnumerable<string> Resolve();
+    Task<IEnumerable<string>> Resolve();
 }

@@ -29,7 +29,7 @@ public static class TagPatch
         // Playlists.Logger.Msg($"{__instance.m_CurTagIndex} -> {playlist.Name} ({playlist.FileName})");
 
         var music = new List<MusicInfo>();
-        GlobalDataBase.s_DbMusicTag.GetMusicInfosByUids(playlist.Resolve().ToList().ToIl2Cpp(), music);
+        GlobalDataBase.s_DbMusicTag.GetMusicInfosByUids(Playlists.ResolveCache[playlist].ToList().ToIl2Cpp(), music);
         foreach (var info in music) __result.Add(info);
 
         // Playlists.Logger.Msg($"Playlist Count: {playlist.Albums.Count}; Resolved: {music.Count}");
