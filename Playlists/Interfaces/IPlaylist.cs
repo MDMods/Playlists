@@ -15,7 +15,7 @@ public interface IPlaylist : IComparable<IPlaylist>
 
     bool Add(string album);
     bool Remove(string album);
-    
+
     /// <summary>
     /// Called after every <see cref="Add"/> and <see cref="Remove"/>.
     /// </summary>

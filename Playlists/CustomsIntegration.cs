@@ -6,7 +6,7 @@ namespace Playlists;
 
 public class CustomsResolver : IAlbumResolver
 {
-    public bool ValidFor(string reference) => reference.StartsWith(CustomsIntegration.AlbumPrefix);
+    public bool ValidFor(string reference) => reference.StartsWith(CustomsIntegration.ALBUM_PREFIX);
 
     public string? GetReference(string reference)
     {
@@ -14,14 +14,14 @@ public class CustomsResolver : IAlbumResolver
             return null;
 
         var result = CustomsIntegration.GetIDForAlbum(reference);
-        return result == CustomsIntegration.Fallback ? null : result;
+        return result == CustomsIntegration.FALLBACK ? null : result;
     }
 }
 
 public static class CustomsIntegration
 {
-    public const string Fallback = "00-00";
-    public const string AlbumPrefix = "album_";
+    public const string FALLBACK = "00-00";
+    public const string ALBUM_PREFIX = "album_";
 
     public static string GetIDForAlbum(string name)
     {
@@ -30,17 +30,17 @@ public static class CustomsIntegration
             // function won't call if this is false
             // but just in case, who knows
             if (!Playlists.CustomAlbumsInstalled)
-                return Fallback;
+                return FALLBACK;
 
             if (!AlbumManager.LoadedAlbums.TryGetValue(name, out var album))
-                return Fallback;
+                return FALLBACK;
 
             return album.Uid;
         }
         catch (Exception ex)
         {
             Playlists.Logger.Error($"Failed to resolve custom album '{name}'!", ex);
-            return Fallback;
+            return FALLBACK;
         }
     }
 
@@ -49,19 +49,19 @@ public static class CustomsIntegration
         try
         {
             if (!Playlists.CustomAlbumsInstalled)
-                return Fallback;
+                return FALLBACK;
 
             var album = AlbumManager.GetByUid(uid);
 
             if (album is null)
-                return Fallback;
+                return FALLBACK;
 
             return album.AlbumName;
         }
         catch (Exception ex)
         {
             Playlists.Logger.Error($"Failed to resolve custom album with uid {uid}!", ex);
-            return Fallback;
+            return FALLBACK;
         }
     }
 }

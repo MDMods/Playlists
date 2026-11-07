@@ -13,8 +13,13 @@ namespace Playlists.Patches;
 [HarmonyPatch(typeof(GameAccountSystem), nameof(GameAccountSystem.SendToUrl))]
 public class APIPatch
 {
-    private static bool Prefix(string url, string method,
-        Il2CppSystem.Collections.Generic.Dictionary<string, Object> datas, Action<JObject> succeedCallback)
+    // ReSharper disable once InconsistentNaming
+    private static bool Prefix(
+        string url,
+        string method,
+        Il2CppSystem.Collections.Generic.Dictionary<string, Object> datas,
+        Action<JObject> succeedCallback
+    )
     {
         switch (url)
         {
@@ -41,7 +46,7 @@ public class APIPatch
                                 { "Korean", p.Name }
                             },
                             tag_picture = p.Icon,
-                            music_list = p.Resolve().Where(id => id != CustomsIntegration.Fallback),
+                            music_list = p.Resolve().Where(id => id != CustomsIntegration.FALLBACK),
                             anchor_pattern = false,
                             sort_key = i,
                             icon_name = $"Icon{p.Name}"
@@ -56,7 +61,7 @@ public class APIPatch
                 return false;
             }
         }
-        
+
         return true;
     }
 }

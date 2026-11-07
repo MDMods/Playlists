@@ -9,13 +9,26 @@ namespace Playlists.Lists;
 
 public class FileSystemPlaylist : IPlaylist
 {
-    [JsonIgnore] public string ID { get; set; } = string.Empty; // filename
-    [JsonIgnore] public DateTime Creation { get; set; }
-    [JsonIgnore] public DateTime LastModified { get; set; }
-    [JsonPropertyName("name")] public string Name { get; set; } = "";
-    [JsonPropertyName("icon")] public string Icon { get; set; } = "";
-    [JsonPropertyName("position")] public int Position { get; set; } = 1;
-    [JsonPropertyName("albums")] public List<string> Albums { get; set; } = new();
+    [JsonIgnore]
+    public string ID { get; set; } = string.Empty; // filename
+
+    [JsonIgnore]
+    public DateTime Creation { get; set; }
+
+    [JsonIgnore]
+    public DateTime LastModified { get; set; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = "";
+
+    [JsonPropertyName("icon")]
+    public string Icon { get; set; } = "";
+
+    [JsonPropertyName("position")]
+    public int Position { get; set; } = 1;
+
+    [JsonPropertyName("albums")]
+    public List<string> Albums { get; set; } = new();
 
     public bool Add(string album)
     {

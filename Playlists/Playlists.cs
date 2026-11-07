@@ -19,10 +19,10 @@ public class Playlists : MelonMod
 
     public static string PlaylistPath => Path.Combine(Directory.GetCurrentDirectory(), "UserData/Playlists");
 
-    public static List<IPlaylist> LoadedPlaylists => _loadedPlaylists ??= GetPlaylists();
-    private static List<IPlaylist>? _loadedPlaylists;
+    public static List<IPlaylist> LoadedPlaylists => loadedPlaylists ??= getPlaylists();
+    private static List<IPlaylist>? loadedPlaylists;
 
-    private static readonly List<IPlaylist> RegisteredLists = new();
+    private static readonly List<IPlaylist> registered_lists = new();
 
     public override void OnInitializeMelon()
     {
@@ -34,13 +34,13 @@ public class Playlists : MelonMod
 
     #region Resolvers
 
-    private static readonly List<IAlbumResolver> Resolvers = new();
+    private static readonly List<IAlbumResolver> resolvers = new();
 
     /// <summary>
     /// Registers a custom resolver for <see cref="ResolveReferences"/>.
     /// </summary>
     /// <param name="resolver"></param>
-    public static void RegisterResolver(IAlbumResolver resolver) => Resolvers.Add(resolver);
+    public static void RegisterResolver(IAlbumResolver resolver) => resolvers.Add(resolver);
 
     /// <summary>
     /// Resolves references to any special album types like CustomAlbums (album_ prefix).
@@ -51,7 +51,7 @@ public class Playlists : MelonMod
 
         foreach (var reference in input)
         {
-            var match = Resolvers.FirstOrDefault(x => x.ValidFor(reference));
+            var match = resolvers.FirstOrDefault(x => x.ValidFor(reference));
 
             if (match is null)
             {
@@ -61,6 +61,7 @@ public class Playlists : MelonMod
 
             var resolved = match.GetReference(reference);
             if (string.IsNullOrWhiteSpace(resolved)) continue;
+
             result.Add(resolved);
         }
 
@@ -72,7 +73,7 @@ public class Playlists : MelonMod
     /// <summary>
     /// Registers a mod-provided playlist that will be added to the list when the main mod loads.
     /// </summary>
-    public static void RegisterPlaylist(IPlaylist playlist) => RegisteredLists.Add(playlist);
+    public static void RegisterPlaylist(IPlaylist playlist) => registered_lists.Add(playlist);
 
     public static int ComparePlaylists(IPlaylist? one, IPlaylist? two)
     {
@@ -86,18 +87,18 @@ public class Playlists : MelonMod
         return result != 0 ? result : string.Compare(one.Name, two.Name, StringComparison.Ordinal);
     }
 
-    private static List<IPlaylist> GetPlaylists()
+    private static List<IPlaylist> getPlaylists()
     {
-        EnsureCreated();
+        ensureCreated();
 
         var files = Directory.GetFiles(PlaylistPath, "*.json");
         var list = files.Select(FileSystemPlaylist.ReadFromDisk).Cast<IPlaylist>().ToList();
-        list.AddRange(RegisteredLists);
+        list.AddRange(registered_lists);
         list.Sort((a, b) => a.CompareTo(b));
         return list;
     }
 
-    private static void EnsureCreated()
+    private static void ensureCreated()
     {
         if (Directory.Exists(PlaylistPath) && Directory.GetFiles(PlaylistPath, "*.json").Any())
             return;
@@ -116,9 +117,9 @@ public class Playlists : MelonMod
         defaultPlaylist.SaveToDisk();
     }
 
-    private bool _pressed;
+    private bool pressed;
 
-    private readonly KeyCode[] _numKeys =
+    private readonly KeyCode[] numKeys =
     {
         KeyCode.Alpha1,
         KeyCode.Alpha2,
@@ -140,15 +141,15 @@ public class Playlists : MelonMod
         if (EventSystem.current?.currentSelectedGameObject is not null)
             return;
 
-        var currentPressed = _numKeys.FirstOrDefault(Input.GetKeyDown);
-        var idx = Array.IndexOf(_numKeys, currentPressed);
+        var currentPressed = numKeys.FirstOrDefault(Input.GetKeyDown);
+        var idx = Array.IndexOf(numKeys, currentPressed);
 
         if (idx >= 0)
         {
-            if (_pressed)
+            if (pressed)
                 return;
 
-            _pressed = true;
+            pressed = true;
 
             if (idx >= LoadedPlaylists.Count)
                 return;
@@ -194,6 +195,6 @@ public class Playlists : MelonMod
             playlist.SaveToDisk();
             ShowText.ShowInfo($"{(remove ? "Removed from" : "Added to")} playlist '{playlist.Name}'!");
         }
-        else _pressed = false;
+        else pressed = false;
     }
 }

@@ -9,16 +9,16 @@ namespace Playlists.Patches;
 [HarmonyPatch(typeof(PnlMusicTagItem), nameof(PnlMusicTagItem.GetMusicInfos))]
 public static class TagPatch
 {
-    private const int CustomTagStartIdx = 32768;
+    private const int custom_tag_start_idx = 32768;
 
-// ReSharper disable InconsistentNaming
+    // ReSharper disable InconsistentNaming
     public static void Postfix(PnlMusicTagItem __instance, int index,
-        ref List<MusicInfo> __result)
-// ReSharper enable InconsistentNaming
+                               ref List<MusicInfo> __result)
+        // ReSharper enable InconsistentNaming
     {
         // is it stupid? yea
         // does it work? yea
-        var localIdx = __instance.m_CurTagIndex - CustomTagStartIdx;
+        var localIdx = __instance.m_CurTagIndex - custom_tag_start_idx;
 
         if (localIdx < 0 || Playlists.LoadedPlaylists.Count <= localIdx)
             return;
